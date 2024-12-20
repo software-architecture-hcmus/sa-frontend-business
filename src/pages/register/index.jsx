@@ -1,7 +1,7 @@
 import { useState } from "react";
 import RouterUrl from "../../const/RouterUrl";
 import { Button, Form, Grid, Input, theme, Typography, Select } from "antd";
-import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined, IdcardOutlined, AndroidOutlined, HomeOutlined, PushpinOutlined } from "@ant-design/icons";
 import { ROLE, STATUS, FIREBASE_USER_COLLECTION } from "../../const/User";
 import { errorNotification } from "../../utils/notification";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -32,10 +32,15 @@ export default function Register() {
         password
       );
       const userRef = collection(dbFirebase, FIREBASE_USER_COLLECTION);
+      const userData = {
+        ...values,
+      }
+      delete userData.password;
       await setDoc(doc(userRef, userCredential.user.uid), {
         email: userCredential.user.email,
-        role: ROLE.CUSTOMER,
+        role: ROLE.BUSINESS,
         status: STATUS.ACTIVE,
+        ...userData
       });
       signOut(authFirebase); // auth cua firebase tu dong login sau khi register -> minh ko muon z nen tu logout ra :))
       navigate(RouterUrl.LOGIN, {
@@ -78,7 +83,8 @@ export default function Register() {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      minHeight: "95vh"
+      minHeight: "95vh",
+      margin: "3vw auto"
     },
     text: {
       color: token.colorTextSecondary,
@@ -94,11 +100,11 @@ export default function Register() {
       <div style={styles.container}>
         <div style={styles.header}>
           <Text style={styles.text}>
-            <b>[Customer portal]</b>
+            <b>[Business portal]</b>
           </Text>
           <Title style={styles.title}>REGISTER</Title>
           <Text style={styles.text}>
-            Welcome to customer portal! Enter your details to sign up.
+            Welcome to business portal! Enter your details to sign up.
           </Text>
         </div>
         <Form
@@ -138,6 +144,63 @@ export default function Register() {
               placeholder="Password"
             />
           </Form.Item>
+          <Form.Item
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: "Please input your brand name!",
+              },
+            ]}
+          >
+            <Input prefix={<IdcardOutlined />} placeholder="Brand name" />
+          </Form.Item>
+          <Form.Item
+            name="industry"
+            rules={[
+              {
+                required: true,
+                message: "Please input your industry!",
+              },
+            ]}
+          >
+            <Input prefix={<AndroidOutlined />} placeholder="Industry" />
+          </Form.Item>
+          <Form.Item
+            name="address"
+            rules={[
+              {
+                required: true,
+                message: "Please input your address!",
+              },
+            ]}
+          >
+            <Input prefix={<HomeOutlined />} placeholder="Address" />
+          </Form.Item>
+          <Form.Item
+            name="gps_lat"
+            rules={[
+              {
+                
+                required: true,
+                message: "Please input your GPS latitude!",
+              },
+            ]}
+          >
+            <Input prefix={<PushpinOutlined />} placeholder="GPS latitude" type="number" />
+          </Form.Item>
+          <Form.Item
+            name="gps_long"
+            rules={[
+              {
+                required: true,
+                message: "Please input your GPS longitude!",
+              },
+            ]}
+          >
+            <Input prefix={<PushpinOutlined />} placeholder="GPS longitude" type="number" />
+          </Form.Item>
+          
 
           {/* <Form.Item
             name="role"

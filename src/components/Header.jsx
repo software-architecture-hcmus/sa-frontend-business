@@ -6,6 +6,7 @@ import { Layout, Menu } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../const/LocalStorage";
 
 const { Header: AntdHeader } = Layout;
 
@@ -14,6 +15,8 @@ const Header = () => {
   const navigate = useNavigate();
   const logout = () => {
     signOut(authFirebase);
+    localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.removeItem(REFRESH_TOKEN);
     navigate(RouterUrl.LOGIN);
   };
 

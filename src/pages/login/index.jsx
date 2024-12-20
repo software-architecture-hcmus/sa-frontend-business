@@ -11,7 +11,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { dbFirebase } from "../../utils/firebase";
 import { FIREBASE_USER_COLLECTION } from "../../const/User";
 import { ROLE, STATUS } from "../../const/User";
-
+import { REGISTER_FLAG, ACCESS_TOKEN, REFRESH_TOKEN } from "../../const/LocalStorage";
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
 const { Text, Title, Link } = Typography;
@@ -46,14 +46,19 @@ export default function Login() {
         const docSnap = await getDoc(docRef);
         if(docSnap.exists()){
           const userData = docSnap.data();
-          if(userData.role === ROLE.CUSTOMER && userData.status === STATUS.ACTIVE){
-            localStorage.removeItem("register"); // remove flag
+          if(userData.role === ROLE.BUSINESS && userData.status === STATUS.ACTIVE){
+            localStorage.removeItem(REGISTER_FLAG); // remove flag
+            localStorage.setItem(ACCESS_TOKEN, userCredential.user.stsTokenManager.accessToken);
+            localStorage.setItem(REFRESH_TOKEN, userCredential.user.stsTokenManager.refreshToken);
             navigate(RouterUrl.HOME);
           }
           else{
             signOut(authFirebase);
-            throw new Error("You are not a customer or your account is banned!");
+            throw new Error("You are not a business or your account is banned!");
           }
+        }
+        else{
+          throw new Error("User not found!");
         }
       }
 
@@ -105,7 +110,7 @@ export default function Login() {
       <div style={styles.container}>
         <div style={styles.header}>
         <Text style={styles.text}>
-            <b>[Customer portal]</b>
+            <b>[Business portal]</b>
           </Text>
           <Title style={styles.title}>LOGIN</Title>
           <Text style={styles.text}>

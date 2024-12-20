@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import RouterUrl from "../const/RouterUrl";
 import Spinner from "./Spinner";
 import { Navigate } from "react-router-dom";
+import { REGISTER_FLAG } from "../const/LocalStorage";
 
 const PublicRoute = ({ children }) => {
     const [loading, setLoading] = useState(true);
@@ -21,7 +22,7 @@ const PublicRoute = ({ children }) => {
                 const docSnap = await getDoc(docRef);
                 if(docSnap.exists()){
                     const userData = docSnap.data();
-                    if(userData.role === ROLE.CUSTOMER && userData.status === STATUS.ACTIVE){
+                    if(userData.role === ROLE.BUSINESS && userData.status === STATUS.ACTIVE){
                         setAuthenticated(true);
                     }
                 }
@@ -29,7 +30,7 @@ const PublicRoute = ({ children }) => {
             setLoading(false);
         });
 
-        if(!localStorage.getItem("register")){
+        if(!localStorage.getItem(REGISTER_FLAG)){
             return () => unsubscribe();
         }
 
