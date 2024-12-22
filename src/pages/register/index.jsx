@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { authFirebase, dbFirebase } from "../../utils/firebase";
 import { collection, doc, setDoc } from "firebase/firestore";
+import { REGISTER_FLAG } from "../../const/LocalStorage";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -25,7 +26,7 @@ export default function Register() {
     const { email, password } = values;
     try {
       setLoading(true);
-      localStorage.setItem("register", "true"); // flag
+      localStorage.setItem(REGISTER_FLAG, "true"); // flag
       const userCredential = await createUserWithEmailAndPassword(
         authFirebase,
         email,
