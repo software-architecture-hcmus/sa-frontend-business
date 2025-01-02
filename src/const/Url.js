@@ -8,8 +8,9 @@ const Url = {
     GET_EVENT_DETAIL: "/api/v1/events/:id",
     GET_GAME: "/api/v1/games",
     CREATE_GAME: "/api/v1/games",
-    GET_GAME_DETAIL: "/api/v1/games/:id",
+    GET_GAME_DETAIL: "/api/v1/games/detail/:id",
     GET_DEFAULT_GAME: "/api/v1/games/default",
+    
 }
 
 export default Url;

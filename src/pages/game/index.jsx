@@ -13,10 +13,9 @@ const QuizGame = () => {
     try {
       setLoading(true);
       const response = await apiClient.get(Url.GET_GAME);
-      console.log(response);
       if(response && response.data && response.data.data)
       {
-        setGames([]);
+        setGames(response.data.data);
       }
       else
       {
@@ -47,11 +46,13 @@ const QuizGame = () => {
       title: "Started",
       dataIndex: "started",
       key: "started",
+      render: (started) => (started ? 'true' : 'false'),
     },
     {
       title: "Allow voucher exchange",
       dataIndex: "allow_voucher_exchange",
       key: "allow_voucher_exchange",
+      render: (allow_voucher_exchange) => (allow_voucher_exchange ? 'true' : 'false'),
     },
     {
       title: "instruction",
