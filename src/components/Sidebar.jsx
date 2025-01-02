@@ -1,4 +1,4 @@
-import { AppstoreOutlined, UserOutlined, CalendarOutlined} from "@ant-design/icons";
+import { AppstoreOutlined, CalendarOutlined, ProductOutlined} from "@ant-design/icons";
 import RouterUrl from "../const/RouterUrl";
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
@@ -13,6 +13,10 @@ const SidebarMenu = [
         label: <Link to={RouterUrl.EVENTS}>Events</Link>,
         icon: <CalendarOutlined />,
     },
+    {
+        label: <Link to={RouterUrl.GAME}>Game</Link>,
+        icon: <ProductOutlined />,
+    }
 ]
 
 const Sidebar = () => {
