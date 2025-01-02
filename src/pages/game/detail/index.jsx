@@ -14,7 +14,6 @@ const GameDetail = () => {
     const [fileList, setFileList] = useState([]);
     const [gameType, setGameType] = useState('');
     const [defaultGames, setDefaultGames] = useState([]);
-    const [questions, setQuestions] = useState([]);
     const [events, setEvents] = useState([]);
     const onFinish = async (values) => {
         try {
@@ -35,8 +34,9 @@ const GameDetail = () => {
         if (Array.isArray(e)) {
             return e;
         }
-        return e?.fileList;
+        return e && e.fileList;
     };
+
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -61,17 +61,21 @@ const GameDetail = () => {
         const getGameDetail = async () => {
             if (id) {
                 let game = await apiClient.get(Url.GET_GAME_DETAIL.replace(":id", id));
-                game = game.data.data;
-                form.setFieldsValue(game);
-                setGameType(game.type);
-                if (game.type === 'QuizGame') {
-                    setQuestions(game.questions || []);
+                if (game && game.status === 200 && game.data && game.data.data)
+                {
+                    game = game.data.data;
+                    console.log(game);
+                    game['type'] = game.default_game?.game_type?.id
+                    game['image'] = game.image ? [{uid: '-1', name: 'image', status: 'done', url: game.image}] : [];
+                    game['event'] = game.event?.id;
+                    game['play_count'] = game.game_turn[0]?.quantity;
+                    form.setFieldsValue(game);
+                    setGameType(game.type);
                 }
             }
         };
         getGameDetail();
     }, [id]);
-
     useEffect(() => {
         const getDefaultGame = async () => {
             const response = await apiClient.get(Url.GET_DEFAULT_GAME);
@@ -148,101 +152,106 @@ const GameDetail = () => {
             {gameType === 'QUIZ' && (
                 <Form.List name="questions">
                     {(fields, { add, remove }) => (
-                    <div style={{ marginLeft: 24, marginBottom: 24 }}>
-                        <Card title="Questions">
-                        {fields.map(({ key, name, ...restField }) => (
-                            <div key={key} style={{ marginBottom: 24 }}>
-                            <Space style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                                <Form.Item
-                                {...restField}
-                                name={[name, 'content']}
-                                rules={[{ required: true, message: 'Missing question content' }]}
-                                >
-                                <Input placeholder="Question Content" />
-                                </Form.Item>
-                                <Form.Item
-                                {...restField}
-                                name={[name, 'image']}
-                                valuePropName="fileList"
-                                getValueFromEvent={normFile}
-                                >
-                                <Upload
-                                    listType="picture"
-                                    maxCount={1}
-                                    beforeUpload={() => false}
-                                    fileList={fileList}
-                                    onChange={({ fileList }) => setFileList(fileList)}
-                                >
-                                    <Button icon={<UploadOutlined />}>Upload Image</Button>
-                                </Upload>
-                                </Form.Item>
-
-                                <Form.Item
-                                {...restField}
-                                name={[name, 'cooldown']}
-                                rules={[{ required: true, message: 'Missing cooldown' }]}
-                                >
-                                <InputNumber placeholder="Cooldown" initialvalue={5} min={1} />
-                                </Form.Item>
-
-                                <Form.Item
-                                {...restField}
-                                name={[name, 'time']}
-                                rules={[{ required: true, message: 'Missing time' }]}
-                                >
-                                <InputNumber placeholder="Time" initialvalue={15} min={1} />
-                                </Form.Item>
-
-                                <MinusCircleOutlined onClick={() => remove(name)} />
-                            </Space>
-
-                            <div style={{ marginLeft: 24, marginTop: 16, display: 'flex', flexDirection: 'row' }}>
-                                <Form.List name={[name, 'answers']}>
-                                {(answerFields) => (
-                                    <div style={{ width: '100%' }}>
-                                    {[0, 1, 2, 3].map((index) => (
-                                        <Space key={index} style={{ display: 'flex', width: '100%', marginBottom: 8 }} align="start">
+                        <div style={{ marginLeft: 24, marginBottom: 24 }}>
+                            <Card title="Questions">
+                                {fields.map(({ key, name, ...restField }) => (
+                                    <div key={key} style={{ marginBottom: 24 }}>
+                                        <Space style={{ display: 'flex', marginBottom: 8 }} align="baseline">
                                             <Form.Item
-                                                name={[name, 'answers', index, 'content']}
-                                                rules={[{ required: true, message: 'Missing answer content' }]}
-                                                style={{ flex: 1, marginBottom: 0, width: '100% !important' }}
+                                                {...restField}
+                                                name={[name, 'content']}
+                                                rules={[{ required: true, message: 'Missing question content' }]}
                                             >
-                                                <Input style={{width:'100%'}} placeholder={`Answer ${index + 1} Content`} />
+                                                <Input placeholder="Question Content" />
                                             </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'image']}
+                                                valuePropName="fileList"
+                                                getValueFromEvent={normFile}
+                                            >
+                                                <Upload
+                                                    listType="picture"
+                                                    maxCount={1}
+                                                    beforeUpload={() => false}
+                                                    fileList={fileList}
+                                                    onChange={({ fileList }) => setFileList(fileList)}
+                                                >
+                                                    <Button icon={<UploadOutlined />}>Upload Image</Button>
+                                                </Upload>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'cooldown']}
+                                                rules={[{ required: true, message: 'Missing cooldown' }]}
+                                            >
+                                                <InputNumber placeholder="Cooldown" initialvalue={5} min={1} />
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'time']}
+                                                rules={[{ required: true, message: 'Missing time' }]}
+                                            >
+                                                <InputNumber placeholder="Time" initialvalue={15} min={1} />
+                                            </Form.Item>
+
+                                            <MinusCircleOutlined onClick={() => remove(name)} />
                                         </Space>
-                                    ))}
-                                   
-                                </div>
-                                )}
-                                </Form.List>
-                                 {/* Radio column */}
-                                 <Radio.Group 
-                                  defaultValue={0}
-                                      onChange={(e) => {
-                                        // e.target.value sẽ là index (0,1,2,3) của radio được chọn
-                                        form.setFieldValue(['questions', name, 'solution'], e.target.value);
-                                      }}
-                                        >
-                                        <Space direction="vertical">
-                                            {[0, 1, 2, 3].map(index => (
-                                            <Radio key={index} value={index}></Radio>
-                                            ))}
-                                        </Space>
-                                </Radio.Group>
-                            </div>
-                            </div>
-                        ))}
-                        <Form.Item>
-                            <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                            Add Question
-                            </Button>
-                        </Form.Item>
-                        </Card>
-                    </div>
+
+                                        <div style={{ marginLeft: 24, marginTop: 16, display: 'flex', flexDirection: 'row' }}>
+                                            <Form.List name={[name, 'answers']}>
+                                                {(answerFields) => (
+                                                    <div style={{ width: '100%' }}>
+                                                        {answerFields.map(({ key: answerKey, name: answerName, ...restAnswerField }) => (
+                                                            <Space key={answerKey} style={{ display: 'flex', width: '100%', marginBottom: 8 }} align="start">
+                                                                <Form.Item
+                                                                    {...restAnswerField}
+                                                                    name={[answerName, 'content']}
+                                                                    rules={[{ required: true, message: 'Missing answer content' }]}
+                                                                    style={{ flex: 1, marginBottom: 0, width: '100% !important' }}
+                                                                >
+                                                                    <Input style={{ width: '100%' }} placeholder={`Answer ${answerKey + 1} Content`} />
+                                                                </Form.Item>
+                                                            </Space>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </Form.List>
+                                            <Radio.Group
+                                                defaultValue={0}
+                                                onChange={(e) => {
+                                                    // e.target.value sẽ là index (0,1,2,3) của radio được chọn
+                                                    form.setFieldValue(['questions', name, 'solution'], e.target.value);
+                                                }}
+                                            >
+                                                <Space direction="vertical">
+                                                    {[0, 1, 2, 3].map(index => (
+                                                        <Radio key={index} value={index}></Radio>
+                                                    ))}
+                                                </Space>
+                                            </Radio.Group>
+                                        </div>
+                                    </div>
+                                ))}
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add({
+                                        content: '',
+                                        image: [],
+                                        cooldown: 5,
+                                        time: 15,
+                                        answers: [{ content: '' }, { content: '' }, { content: '' }, { content: '' }],
+                                        solution: 0
+                                    })} block icon={<PlusOutlined />}>
+                                        Add Question
+                                    </Button>
+                                </Form.Item>
+                            </Card>
+                        </div>
                     )}
                 </Form.List>
-            )}          
-
+            )}
             <Form.Item
                 name="allow_voucher_exchange"
                 label="Allow Voucher Exchange"
