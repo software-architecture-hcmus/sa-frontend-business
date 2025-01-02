@@ -8,6 +8,9 @@ const RouterUrl = {
     EVENTS: "/events",
     EVENT_DETAIL: "/events/:id",
     EVENT_CREATE: "/events/create",
+    GAME: "/game",
+    GAME_DETAIL: "/game/:id",
+    GAME_CREATE: "/game/create",
 }
 
 export default RouterUrl;
