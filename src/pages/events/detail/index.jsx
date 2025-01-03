@@ -4,20 +4,60 @@ import { PlusOutlined, MinusCircleOutlined, UploadOutlined } from "@ant-design/i
 import apiClient from "../../../utils/apiClient";
 import { successNotification, errorNotification } from "../../../utils/notification";
 import Url from "../../../const/Url";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
-
-//TODO: upload image
 
 const EventDetail = () => {
     const {id} = useParams()
     const [form] = Form.useForm();
     const [fileList, setFileList] = useState([]);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const [isCreateEvent, setIsCreateEvent] = useState(true);
+    const navigate = useNavigate();
+
+    const sendRequest = async (formData, isCreateEvent) => {
+        let response = null;
+        if (isCreateEvent) {
+            response = await apiClient.post(Url.CREATE_EVENT, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }); 
+        } else {
+            response = await apiClient.put(Url.UPDATE_EVENT(id), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }); 
+        }
+
+        return response;
+    }
 
     const onFinish = async (values) => {
         try {
-            const response = await apiClient.post(Url.CREATE_EVENT, values)
-            successNotification("Event created successfully!")
+            const formData = new FormData();
+            
+            // Append the file from the image field
+            if (values.image?.[0]?.originFileObj) {
+                formData.append('image', values.image[0].originFileObj);
+            }
+            
+            // Append other form values
+            Object.keys(values).forEach(key => {
+                if (key !== 'image') {
+                    let value = values[key];
+                    if (key === 'vouchers') value = JSON.stringify(value);
+                    formData.append(key, value);
+                }
+            });
+
+            const response = await sendRequest(formData, isCreateEvent);
+
+            if (response.data.ok) {
+                successNotification(`Event ${isCreateEvent ? 'created' : 'updated' } successfully!`);
+                navigate('/events');
+            }
         } catch (error) {
             errorNotification(error.message)
         }
@@ -25,14 +65,15 @@ const EventDetail = () => {
 
     const normFile = (e) => {
         if (Array.isArray(e)) {
-            return e;
+            return e.slice(-1);
         }
-        return e?.fileList;
+        return e?.fileList.slice(-1);
     };
 
     useEffect(() => {
         const getEventDetail = async () => {
             if(id){
+                setIsCreateEvent(false);
                 let event = await apiClient.get(Url.GET_EVENT_DETAIL.replace(":id", id));
                 event = event.data.data;
                 //change event.start and event.end to date
@@ -45,20 +86,28 @@ const EventDetail = () => {
                         expiry_date: moment(voucher.expiry_date)
                     }));
                 }
-
-                console.log(event)
-
-
-
+                setPreviewUrl(event.image);
+                delete event.image;
                 form.setFieldsValue(event)
             }
         }
         getEventDetail()
     }, [id])
 
+    const handleFileChange = ({ fileList }) => {
+        const newFileList = fileList.slice(-1);
+        if (newFileList.length > 0) {
+            const url = URL.createObjectURL(newFileList[0].originFileObj);
+            console.log('file' ,url);
+            setPreviewUrl(url);
+        } else {
+            setPreviewUrl(null);
+        }
+        setFileList(newFileList);
+    };
+
     return (
         <Form
-            disabled={!!id}
             form={form}
             layout="vertical"
             onFinish={onFinish}
@@ -77,16 +126,26 @@ const EventDetail = () => {
                 label="Event Image"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
-                //rules={[{ required: true, message: 'Please upload an image!' }]}
+                rules={[{ required: !id, message: 'Please upload an image!' }]}
             >
                 <Upload
                     listType="picture"
                     maxCount={1}
                     beforeUpload={() => false}
                     fileList={fileList}
-                    onChange={({ fileList }) => setFileList(fileList)}
+                    onChange={handleFileChange}
+                    showUploadList={false}
                 >
-                    <Button icon={<UploadOutlined />}>Upload Image</Button>
+                    <Space direction="vertical">
+                        {(previewUrl || fileList[0]?.url) && (
+                            <img 
+                                src={previewUrl || fileList[0]?.url} 
+                                alt="Event preview" 
+                                style={{ maxWidth: '200px', maxHeight: '200px' }}
+                            />
+                        )}
+                        <Button icon={<UploadOutlined />}>Upload Image</Button>
+                    </Space>
                 </Upload>
             </Form.Item>
 
@@ -173,9 +232,9 @@ const EventDetail = () => {
                 />
             </Form.Item>
 
-            <Form.Item hidden={!!id}>
+            <Form.Item>
                 <Button type="primary" htmlType="submit">
-                    Create Event
+                    {isCreateEvent ? 'Create Event' : 'Update Event'}
                 </Button>
             </Form.Item>
         </Form>
