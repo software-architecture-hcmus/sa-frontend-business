@@ -12,6 +12,7 @@ const { Option } = Select;
 const GameDetail = () => {
     const { id } = useParams();
     const [form] = Form.useForm();
+    const navigate = useNavigate();
     const [fileList, setFileList] = useState([]);
     const [gameType, setGameType] = useState('');
     const [defaultGames, setDefaultGames] = useState([]);
@@ -40,7 +41,12 @@ const GameDetail = () => {
         }
         return e && e.fileList;
     };
-
+    const handlePlayGame = () => {
+        if (id) {
+            // Điều hướng đến trang chơi game với id tương ứng
+            navigate(`/game/quiz/${id}`);
+        }
+    };
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -115,6 +121,20 @@ const GameDetail = () => {
     };
 
     return (
+        <>
+        {id && gameType === "QUIZ" && (
+            <div style={{ marginBottom: 16,display: 'flex',
+                justifyContent: 'flex-end'}}>
+                <Button 
+                    type="primary" 
+                    onClick={handlePlayGame}
+                    size="large"
+                >
+                    Play Game Quiz
+                </Button>
+            </div>
+        )}
+
         <Form
             form={form}
             layout="vertical"
@@ -321,13 +341,13 @@ const GameDetail = () => {
                 </Select>
             </Form.Item>
 
-            <Form.Item hidden={!!id}>
-                <Button type="primary" htmlType="submit">
+            <Form.Item hidden={!!id} >
+                <Button  type="primary" htmlType="submit">
                     {id ? "Update Game" : "Create Game"}
                 </Button>
             </Form.Item>
-            
         </Form>
+    </>
     );
 };
 

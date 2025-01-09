@@ -5,7 +5,7 @@ import apiClient from "../../utils/apiClient";
 import Url from "../../const/Url";
 import RouterUrl from "../../const/RouterUrl";
 import { errorNotification } from "../../utils/notification";
-const QuizGame = () => {
+const Game = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -87,4 +87,4 @@ const QuizGame = () => {
     </div>
   );
 };
-export default QuizGame;
+export default Game;
