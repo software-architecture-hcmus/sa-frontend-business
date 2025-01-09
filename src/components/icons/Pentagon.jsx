@@ -1,4 +1,4 @@
-export default function Pentagon({ className, fill, stroke }) {
+export default function Pentagon({ className, fill, stroke, style }) {
   return (
     <svg
       fill={fill}
@@ -11,6 +11,7 @@ export default function Pentagon({ className, fill, stroke }) {
       transform="rotate(180)"
       stroke={fill}
       stroke-width="0.005120100000000001"
+      style = {style}
     >
       <g stroke-width="0" />
 

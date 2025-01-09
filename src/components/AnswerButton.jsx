@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import clsx from "clsx"
 
 export default function AnswerButton({
   className,
@@ -8,20 +8,14 @@ export default function AnswerButton({
 }) {
   return (
     <button
-      className={clsx(className)}
-      style={{
-        boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.1)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-        borderRadius: '0.375rem',
-        padding: '1.5rem 1rem',
-        textAlign: 'left',
-      }}
+      className={clsx(
+        "shadow-inset flex items-center gap-3 rounded px-4 py-6 text-left",
+        className,
+      )}
       {...otherProps}
     >
-      <Icon style={{ height: '1.5rem', width: '1.5rem' }} />
-      <span style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)' }}>{children}</span>
+      <Icon className="h-6 w-6" />
+      <span className="drop-shadow-md">{children}</span>
     </button>
-  );
+  )
 }

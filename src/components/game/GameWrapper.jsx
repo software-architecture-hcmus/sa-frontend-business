@@ -35,17 +35,25 @@ export default function GameWrapper({ children, textNext, onNext, manager }) {
   }, [])
 
   return (
-    <section style={{ position: 'relative', display: 'flex', minHeight: '100vh', width: '100%', flexDirection: 'column', justifyContent: 'space-between'}}>
-      <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', padding: '1rem' }}>
+    <section className="relative flex min-h-screen w-full flex-col justify-between bg-orange-100">
+      <div className="fixed left-0 top-0 -z-10 h-full w-full bg-orange-600 opacity-70">
+        <img
+          className="pointer-events-none h-full w-full object-cover opacity-60"
+          src={background}
+          alt="background"
+        />
+      </div>
+
+      <div className="flex w-full justify-between p-4">
         {questionState && (
-          <div style={{ boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.1)', display: 'flex', alignItems: 'center', borderRadius: '0.375rem', backgroundColor: 'white', padding: '0.5rem 1rem', fontSize: '1.125rem', fontWeight: 'bold', color: 'black' }}>
+          <div className="shadow-inset flex items-center rounded-md bg-white p-2 px-4 text-lg font-bold text-black">
             {`${questionState.current} / ${questionState.total}`}
           </div>
         )}
 
         {manager && (
           <Button
-            style={{ alignSelf: 'flex-end', backgroundColor: 'white', padding: '0 1rem', color: 'black' }}
+            className="self-end bg-white px-4 !text-black"
             onClick={() => onNext()}
           >
             {textNext}
@@ -56,9 +64,9 @@ export default function GameWrapper({ children, textNext, onNext, manager }) {
       {children}
 
       {!manager && (
-        <div style={{ zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'white', padding: '0.5rem 1rem', fontSize: '1.125rem', fontWeight: 'bold', color: 'white' }}>
-          <p style={{ color: 'gray' }}>{!!player && player.username}</p>
-          <div style={{ borderRadius: '0.125rem', backgroundColor: 'gray', padding: '0.25rem 0.75rem', fontSize: '1.125rem' }}>
+        <div className="z-50 flex items-center justify-between bg-white px-4 py-2 text-lg font-bold text-white">
+          <p className="text-gray-800">{!!player && player.username}</p>
+          <div className="rounded-sm bg-gray-800 px-3 py-1 text-lg">
             {!!player && player.points}
           </div>
         </div>

@@ -2,11 +2,11 @@ import Loader from "../../Loader";
 
 export default function Wait({ data: { text } }) {
   return (
-    <section style={{ position: 'relative', margin: '0 auto', display: 'flex', width: '100%', maxWidth: '7xl', flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <section className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center bg-orange-100">
       <Loader />
-      <h2 style={{ marginTop: '1.25rem', textAlign: 'center', fontSize: '3rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)', md: { fontSize: '4xl' }, lg: { fontSize: '5xl' } }}>
+      <h2 className="mt-5 text-center text-3xl font-bold text-white drop-shadow-lg md:text-4xl lg:text-5xl">
         {text}
       </h2>
     </section>
-  );
+  )
 }

@@ -24,23 +24,23 @@ export default function Result({
   }, [sfxResults]);
 
   return (
-    <section style={{ animation: 'show 0.5s ease-in-out', position: 'relative', margin: '0 auto', display: 'flex', width: '100%', maxWidth: '7xl', flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <section className="anim-show relative mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center bg-orange-100">
       {correct ? (
-        <CricleCheck style={{ aspectRatio: '1 / 1', maxHeight: '15rem', width: '100%' }} />
+        <CricleCheck className="aspect-square max-h-60 w-full" />
       ) : (
-        <CricleXmark style={{ aspectRatio: '1 / 1', maxHeight: '15rem', width: '100%' }} />
+        <CricleXmark className=" aspect-square max-h-60 w-full" />
       )}
-      <h2 style={{ marginTop: '0.25rem', fontSize: '2.5rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+      <h2 className="mt-1 text-4xl font-bold text-white drop-shadow-lg">
         {message}
       </h2>
-      <p style={{ marginTop: '0.25rem', fontSize: '1.25rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+      <p className="mt-1 text-xl font-bold text-white drop-shadow-lg">
         {`You are top ${rank}` + (aheadOfMe ? ", behind " + aheadOfMe : "")}
       </p>
       {correct && (
-        <span style={{ marginTop: '0.5rem', borderRadius: '0.375rem', backgroundColor: 'rgba(0, 0, 0, 0.4)', padding: '0.5rem 1rem', fontSize: '1.5rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+        <span className="mt-2 rounded bg-black/40 px-4 py-2 text-2xl font-bold text-white drop-shadow-lg">
           +{points}
         </span>
       )}
     </section>
-  );
+  )
 }

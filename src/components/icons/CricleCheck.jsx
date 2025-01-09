@@ -1,4 +1,4 @@
-export default function CricleCheck({ className }) {
+export default function CricleCheck({ className, style }) {
   return (
     <svg
       fill="#22c55e"
@@ -9,6 +9,7 @@ export default function CricleCheck({ className }) {
       stroke="#22c55e"
       strokeWidth="0.00056"
       className={className}
+      style = {style}
     >
       <g strokeWidth="0" transform="translate(11.2,11.2), scale(0.6)">
         <rect

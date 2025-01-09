@@ -1,4 +1,4 @@
-export default function CricleXmark({ className }) {
+export default function CricleXmark({ className, style }) {
   return (
     <svg
       fill="#ef4444"
@@ -8,6 +8,7 @@ export default function CricleXmark({ className }) {
       xmlns="http://www.w3.org/2000/svg"
       stroke="#ef4444"
       className={className}
+      style = {style}
     >
       <g strokeWidth="0" transform="translate(12.4,12.4), scale(0.6)">
         <rect

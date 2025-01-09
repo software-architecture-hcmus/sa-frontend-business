@@ -16,6 +16,7 @@ import EventDetail from './pages/events/detail';
 import Game from './pages/game';
 import GameDetail from './pages/game/detail';
 import QuizGame from './pages/game/quiz';
+import "./styles/globals.css"
 function App() {
 
   return (

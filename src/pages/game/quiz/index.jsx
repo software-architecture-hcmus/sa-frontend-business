@@ -2,10 +2,11 @@ import GameWrapper from "../../../components/game/GameWrapper"
 import { GAME_STATES, GAME_STATE_COMPONENTS_MANAGER } from "../../../constants"
 import { useSocketContext } from "../../../contexts/socket"
 import { createElement, useEffect, useState } from "react"
+import { useParams  } from "react-router-dom";
 
 export default function QuizGame() {
   const { socket } = useSocketContext()
-
+  const { id } = useParams();
   const [nextText, setNextText] = useState("Start")
   const [state, setState] = useState({
     ...GAME_STATES,
@@ -27,32 +28,16 @@ export default function QuizGame() {
       })
     })
 
-    socket.on("manager:inviteCode", (inviteCode) => {
-      setState({
-        ...state,
-        created: true,
-        status: {
-          ...state.status,
-          data: {
-            ...state.status.data,
-            inviteCode: inviteCode,
-          },
-        },
-      })
-    })
-
     return () => {
       socket.off("game:status")
-      socket.off("manager:inviteCode")
     }
   }, [state])
 
   const handleSkip = () => {
     setNextText("Skip")
-
     switch (state.status.name) {
       case "SHOW_ROOM":
-        socket.emit("manager:startGame")
+        socket.emit("manager:startGame", id)
         break
 
       case "SELECT_ANSWER":
@@ -70,13 +55,13 @@ export default function QuizGame() {
   }
 
   return (
-    <>  
+    <div>  
        <GameWrapper textNext={nextText} onNext={handleSkip} manager>
             {GAME_STATE_COMPONENTS_MANAGER[state.status.name] &&
               createElement(GAME_STATE_COMPONENTS_MANAGER[state.status.name], {
                 data: state.status.data,
               })}
           </GameWrapper>
-    </>
+    </div>
   )
 }

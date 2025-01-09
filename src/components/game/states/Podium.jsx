@@ -73,55 +73,45 @@ export default function Podium({ data: { subject, top } }) {
         <ReactConfetti
           width={width}
           height={height}
-          style={{ height: '100%', width: '100%' }}
+          className="h-full w-full"
         />
       )}
 
       {apparition >= 3 && top.length >= 3 && (
-        <div style={{ position: 'absolute', minHeight: '100vh', width: '100%', overflow: 'hidden' }}>
-          <div className="spotlight"></div>
+        <div className="absolute min-h-screen w-full overflow-hidden bg-orange-100">
+          <div className="spotlight"></div>{" "}
         </div>
       )}
-      <section style={{ position: 'relative', margin: '0 auto', display: 'flex', width: '100%', maxWidth: '7xl', flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <h2 style={{ textAlign: 'center', fontSize: '3rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+      <section className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-between bg-orange-100">
+        <h2 className="anim-show text-center text-3xl font-bold text-white drop-shadow-lg md:text-4xl lg:text-5xl">
           {subject}
         </h2>
 
         <div
-          style={{
-            display: 'grid',
-            width: '100%',
-            maxWidth: '800px',
-            flex: 1,
-            gridTemplateColumns: `repeat(${top.length}, minmax(0, 1fr))`,
-            alignItems: 'end',
-            justifyContent: 'center',
-            overflowY: 'hidden',
-            overflowX: 'visible',
-          }}
+          className={`grid w-full max-w-[800px] flex-1 grid-cols-${top.length} items-end justify-center justify-self-end overflow-y-hidden overflow-x-visible`}
         >
           {top[1] && (
             <div
               className={clsx(
-                "flex flex-col items-center justify-center gap-3",
-                { opacity: apparition >= 2 ? 1 : 0, transform: apparition >= 2 ? 'translateY(0)' : 'translateY(100%)', transition: 'all 0.5s' },
+                "z-20 flex h-[50%] w-full translate-y-full flex-col items-center justify-center gap-3 opacity-0 transition-all",
+                { "!translate-y-0 opacity-100": apparition >= 2 },
               )}
-              style={{ zIndex: 20, height: '50%', width: '100%' }}
             >
               <p
                 className={clsx(
-                  "overflow-visible whitespace-nowrap text-center text-2xl font-bold text-white",
-                  { animation: apparition >= 4 ? 'balanced 1s infinite' : 'none' },
+                  "overflow-visible whitespace-nowrap text-center text-2xl font-bold text-white drop-shadow-lg md:text-4xl",
+                  {
+                    "anim-balanced": apparition >= 4,
+                  },
                 )}
-                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
               >
                 {top[1].username}
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', backgroundColor: '#007bff', paddingTop: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '0.375rem' }}>
-                <p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '3.5rem', width: '3.5rem', borderRadius: '50%', border: '4px solid #d1d5db', backgroundColor: '#6b7280', fontSize: '1.875rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
-                  <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>2</span>
+              <div className="flex h-full w-full flex-col items-center gap-4 rounded-t-md bg-primary pt-6 text-center shadow-2xl">
+                <p className="flex aspect-square h-14 items-center justify-center rounded-full border-4 border-zinc-400 bg-zinc-500 text-3xl font-bold text-white drop-shadow-lg">
+                  <span className="drop-shadow-md">2</span>
                 </p>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+                <p className="text-2xl font-bold text-white drop-shadow-lg">
                   {top[1].points}
                 </p>
               </div>
@@ -130,26 +120,28 @@ export default function Podium({ data: { subject, top } }) {
 
           <div
             className={clsx(
-              "flex flex-col items-center gap-3",
-              { opacity: apparition >= 3 ? 1 : 0, transform: apparition >= 3 ? 'translateY(0)' : 'translateY(100%)', transition: 'all 0.5s' },
-              { minWidth: top.length < 2 ? '16rem' : 'auto' },
+              "z-30 flex h-[60%] w-full translate-y-full flex-col items-center gap-3 opacity-0 transition-all",
+              {
+                "!translate-y-0 opacity-100": apparition >= 3,
+              },
+              {
+                "md:min-w-64": top.length < 2,
+              },
             )}
-            style={{ zIndex: 30, height: '60%', width: '100%' }}
           >
             <p
               className={clsx(
-                "overflow-visible whitespace-nowrap text-center text-2xl font-bold text-white",
-                { animation: apparition >= 4 ? 'balanced 1s infinite' : 'none', opacity: apparition >= 4 ? 1 : 0 },
+                "overflow-visible whitespace-nowrap text-center text-2xl font-bold text-white opacity-0 drop-shadow-lg md:text-4xl",
+                { "anim-balanced opacity-100": apparition >= 4 },
               )}
-              style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
             >
               {top[0].username}
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', backgroundColor: '#007bff', paddingTop: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '0.375rem' }}>
-              <p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '3.5rem', width: '3.5rem', borderRadius: '50%', border: '4px solid #f59e0b', backgroundColor: '#fbbf24', fontSize: '1.875rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
-                <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>1</span>
+            <div className="flex h-full w-full flex-col items-center gap-4 rounded-t-md bg-primary pt-6 text-center shadow-2xl">
+              <p className="flex aspect-square h-14 items-center justify-center rounded-full border-4 border-amber-400 bg-amber-300 text-3xl font-bold text-white drop-shadow-lg">
+                <span className="drop-shadow-md">1</span>
               </p>
-              <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+              <p className="text-2xl font-bold text-white drop-shadow-lg">
                 {top[0].points}
               </p>
             </div>
@@ -158,25 +150,28 @@ export default function Podium({ data: { subject, top } }) {
           {top[2] && (
             <div
               className={clsx(
-                "flex flex-col items-center gap-3",
-                { opacity: apparition >= 1 ? 1 : 0, transform: apparition >= 1 ? 'translateY(0)' : 'translateY(100%)', transition: 'all 0.5s' },
+                "z-10 flex h-[40%] w-full translate-y-full flex-col items-center gap-3 opacity-0 transition-all",
+                {
+                  "!translate-y-0 opacity-100": apparition >= 1,
+                },
               )}
-              style={{ zIndex: 10, height: '40%', width: '100%' }}
             >
               <p
                 className={clsx(
-                  "overflow-visible whitespace-nowrap text-center text-2xl font-bold text-white",
-                  { animation: apparition >= 4 ? 'balanced 1s infinite' : 'none' },
+                  "overflow-visible whitespace-nowrap text-center text-2xl font-bold text-white drop-shadow-lg md:text-4xl",
+                  {
+                    "anim-balanced": apparition >= 4,
+                  },
                 )}
-                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
               >
                 {top[2].username}
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', backgroundColor: '#007bff', paddingTop: '1.5rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '0.375rem' }}>
-                <p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '3.5rem', width: '3.5rem', borderRadius: '50%', border: '4px solid #78350f', backgroundColor: '#92400e', fontSize: '1.875rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
-                  <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>3</span>
+              <div className="flex h-full w-full flex-col items-center gap-4 rounded-t-md bg-primary pt-6 text-center shadow-2xl">
+                <p className="flex aspect-square h-14 items-center justify-center rounded-full border-4 border-amber-800 bg-amber-700 text-3xl font-bold text-white drop-shadow-lg">
+                  <span className="drop-shadow-md">3</span>
                 </p>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+
+                <p className="text-2xl font-bold text-white drop-shadow-lg">
                   {top[2].points}
                 </p>
               </div>
@@ -185,5 +180,5 @@ export default function Podium({ data: { subject, top } }) {
         </div>
       </section>
     </>
-  );
+  )
 }
