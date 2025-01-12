@@ -9,6 +9,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 
 const Events = () => {
   const [events, setEvents] = useState([]);
+  const [initalEvents, setInitialEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +21,7 @@ const Events = () => {
       setLoading(true);
       const response = await apiClient.get(Url.GET_EVENTS);
       setEvents(response.data.data);
+      setInitialEvents(response.data.data)
     } catch (error) {
       errorNotification(error.message);
     } finally {
@@ -55,12 +57,12 @@ const Events = () => {
 
   const handleSearch = () => {
     if (searchQuery) {
-      const filteredEvents = events.filter(event =>
+      const filteredEvents = initalEvents.filter(event =>
         event.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setEvents(filteredEvents);
     } else {
-      fetchEvents(); // Reset to original events if search query is empty
+      setEvents(initalEvents);
     }
   };
 
