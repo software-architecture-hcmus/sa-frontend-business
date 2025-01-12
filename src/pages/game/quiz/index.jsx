@@ -16,6 +16,11 @@ export default function QuizGame() {
     },
   })
 
+  useEffect(()=>{
+    console.log("manager:joinRoom");
+    socket.emit("manager:joinRoom", { id })
+  },[id])
+
   useEffect(() => {
     socket.on("game:status", (status) => {
       setState({

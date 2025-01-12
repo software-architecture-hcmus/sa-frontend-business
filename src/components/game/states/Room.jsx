@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 export default function Room({ data: { text, inviteCode } }) {
   const { socket } = useSocketContext();
   const [playerList, setPlayerList] = useState([]);
-
   useEffect(() => {
     socket.on("manager:newPlayer", (player) => {
+      console.log("player: ", player)
       setPlayerList([...playerList, player]);
     });
 
