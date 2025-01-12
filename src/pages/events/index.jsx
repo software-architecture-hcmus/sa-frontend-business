@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Button, Modal } from "antd";
+import { Table, Button, Modal, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../utils/apiClient";
 import Url from "../../const/Url";
@@ -12,12 +12,13 @@ const Events = () => {
   const [loading, setLoading] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+
   const fetchEvents = async () => {
     try {
       setLoading(true);
       const response = await apiClient.get(Url.GET_EVENTS);
-      console.log(response.data.data);
       setEvents(response.data.data);
     } catch (error) {
       errorNotification(error.message);
@@ -25,9 +26,11 @@ const Events = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchEvents();
   }, []);
+
   const handleDelete = async (id) => {
     try {
       setLoading(true);
@@ -39,14 +42,28 @@ const Events = () => {
       setLoading(false);
     }
   };
+
   const showDeleteModal = (id) => {
     setSelectedId(id);
     setIsModalOpen(true);
   };
+
   const handleModalConfirm = async () => {
     await handleDelete(selectedId);
     setIsModalOpen(false);
   };
+
+  const handleSearch = () => {
+    if (searchQuery) {
+      const filteredEvents = events.filter(event =>
+        event.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setEvents(filteredEvents);
+    } else {
+      fetchEvents(); // Reset to original events if search query is empty
+    }
+  };
+
   const columns = [
     {
       title: "ID",
@@ -80,28 +97,41 @@ const Events = () => {
       key: "end",
       render: (date) => new Date(date).toLocaleString(),
     },
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     <Button 
-    //       type="link" 
-    //       danger 
-    //       icon={<DeleteOutlined />} 
-    //       onClick={() => showDeleteModal(record.id)}
-    //     />
-    //   ),
-    // },
+      // {
+      //   title: "Action",
+      //   key: "action",
+      //   render: (_, record) => (
+      //     <Button 
+      //       type="link" 
+      //       danger 
+      //       icon={<DeleteOutlined />} 
+      //       onClick={() => showDeleteModal(record.id)}
+      //     />
+      //   ),
+      // },
   ];
+
   return (
     <div>
-      <Button
-        type="primary"
-        style={{ marginBottom: 16 }}
-        onClick={() => navigate(RouterUrl.EVENT_CREATE)}
-      >
-        Create Event
-      </Button>
+       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div>
+          <Input
+            placeholder="Search events"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ width: 200, marginRight: 16 }}
+          />
+          <Button type="primary" onClick={handleSearch}>
+            Search
+          </Button>
+        </div>
+        <Button
+          type="primary"
+          onClick={() => navigate(RouterUrl.EVENT_CREATE)}
+        >
+          + Create Event
+        </Button>
+      </div>
       <Table
         columns={columns}
         dataSource={events}
@@ -121,4 +151,7 @@ const Events = () => {
     </div>
   );
 };
+
 export default Events;
+
+
