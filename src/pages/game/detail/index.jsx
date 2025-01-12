@@ -17,7 +17,6 @@ const GameDetail = () => {
     const [gameType, setGameType] = useState('');
     const [defaultGames, setDefaultGames] = useState([]);
     const [events, setEvents] = useState([]);
-    const navigate = useNavigate();
     const onFinish = async (values) => {
         try {
             const response = await apiClient.post(Url.CREATE_GAME, values);

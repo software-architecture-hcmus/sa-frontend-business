@@ -112,7 +112,7 @@ export default function Podium({ data: { subject, top } }) {
                   <span className="drop-shadow-md">2</span>
                 </p>
                 <p className="text-2xl font-bold text-white drop-shadow-lg">
-                  {top[1].points}
+                  {top[1].score}
                 </p>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function Podium({ data: { subject, top } }) {
                 <span className="drop-shadow-md">1</span>
               </p>
               <p className="text-2xl font-bold text-white drop-shadow-lg">
-                {top[0].points}
+                {top[0].score}
               </p>
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function Podium({ data: { subject, top } }) {
                 </p>
 
                 <p className="text-2xl font-bold text-white drop-shadow-lg">
-                  {top[2].points}
+                  {top[2].score}
                 </p>
               </div>
             </div>

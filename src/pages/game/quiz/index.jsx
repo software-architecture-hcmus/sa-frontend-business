@@ -1,13 +1,15 @@
 import GameWrapper from "../../../components/game/GameWrapper"
 import { GAME_STATES, GAME_STATE_COMPONENTS_MANAGER } from "../../../constants"
 import { useSocketContext } from "../../../contexts/socket"
-import { createElement, useEffect, useState } from "react"
-import { useParams  } from "react-router-dom";
+import { createElement, useEffect, useState, useContext } from "react"
+import { useParams} from "react-router-dom";
+import UserContext from "../../../contexts/UserContext";
 
 export default function QuizGame() {
   const { socket } = useSocketContext()
   const { id } = useParams();
   const [nextText, setNextText] = useState("Start")
+  const user = useContext(UserContext);
   const [state, setState] = useState({
     ...GAME_STATES,
     status: {
@@ -23,14 +25,32 @@ export default function QuizGame() {
 
   useEffect(() => {
     socket.on("game:status", (status) => {
-      setState({
-        ...state,
-        status: status,
-        question: {
-          ...state.question,
-          current: status.question,
-        },
-      })
+      if(status?.name === "SHOW_RESULT")
+      {
+        if (status.data?.id === user.uid)
+        {
+          setState({
+            ...state,
+            status: status,
+            question: {
+              ...state.question,
+              current: status.question,
+            },
+          })
+        }
+      }
+      else
+      {
+        setState({
+          ...state,
+          status: status,
+          question: {
+            ...state.question,
+            current: status.question,
+          },
+        })
+      }
+      
     })
 
     return () => {
@@ -50,11 +70,11 @@ export default function QuizGame() {
         break
 
       case "SHOW_RESPONSES":
-        socket.emit("manager:showLeaderboard")
+        socket.emit("manager:showLeaderboard", id)
         break
 
       case "SHOW_LEADERBOARD":
-        socket.emit("manager:nextQuestion")
+        socket.emit("manager:nextQuestion",id)
         break
     }
   }
