@@ -4,7 +4,8 @@ import { PlusOutlined, MinusCircleOutlined, UploadOutlined } from "@ant-design/i
 import apiClient from "../../../utils/apiClient";
 import { successNotification, errorNotification } from "../../../utils/notification";
 import Url from "../../../const/Url";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import RouterUrl from "../../../const/RouterUrl";
 
 const { Option } = Select;
 
@@ -15,12 +16,15 @@ const GameDetail = () => {
     const [gameType, setGameType] = useState('');
     const [defaultGames, setDefaultGames] = useState([]);
     const [events, setEvents] = useState([]);
+    const navigate = useNavigate();
     const onFinish = async (values) => {
         try {
             const response = await apiClient.post(Url.CREATE_GAME, values);
             if (response && response.status === 201) {
                 console.log(response);
                 successNotification("Game has been created successfully!");
+                navigate(RouterUrl.GAME_DETAIL.replace(':id', response.data.data.id));
+                
             }
             else{
                 errorNotification("Game has been created failed!");
