@@ -12,11 +12,11 @@ const { Option } = Select;
 const GameDetail = () => {
     const { id } = useParams();
     const [form] = Form.useForm();
+    const navigate = useNavigate();
     const [fileList, setFileList] = useState([]);
     const [gameType, setGameType] = useState('');
     const [defaultGames, setDefaultGames] = useState([]);
     const [events, setEvents] = useState([]);
-    const navigate = useNavigate();
     const onFinish = async (values) => {
         try {
             const response = await apiClient.post(Url.CREATE_GAME, values);
@@ -40,7 +40,12 @@ const GameDetail = () => {
         }
         return e && e.fileList;
     };
-
+    const handlePlayGame = () => {
+        if (id) {
+            // Điều hướng đến trang chơi game với id tương ứng
+            navigate(`/game/quiz/${id}`);
+        }
+    };
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -68,11 +73,30 @@ const GameDetail = () => {
                 if (game && game.status === 200 && game.data && game.data.data)
                 {
                     game = game.data.data;
-                    console.log(game);
                     game['type'] = game.default_game?.game_type?.id
                     game['image'] = game.image ? [{uid: '-1', name: 'image', status: 'done', url: game.image}] : [];
                     game['event'] = game.event?.id;
-                    game['play_count'] = game.game_turn[0]?.quantity;
+                    if(game.type && game.type === "FLAPPYBIRD")
+                    {
+                        game['play_count'] = game.game_turn[0]?.quantity;
+                    }
+                    else
+                    {
+                        const questions = game?.rooms[0]?.questions;
+                        if(questions)
+                        {
+                            delete game.room;
+                            game['questions']= questions;
+                            for(const question of questions)
+                            {
+                                const solution = question.solution;
+                                const solutionIndex = question?.answers?.findIndex(answer => answer.id == solution.id);
+                                question.solution = solutionIndex >= 0 ? solutionIndex : 0;
+                                question['image'] = question['image'] ? [{uid: '-1', name: 'image', status: 'done', url: question.image}] : [];
+                            }
+                        }
+                    }
+                    console.log(game);
                     form.setFieldsValue(game);
                     setGameType(game.type);
                 }
@@ -96,8 +120,21 @@ const GameDetail = () => {
     };
 
     return (
+        <>
+        {id && gameType === "QUIZ" && (
+            <div style={{ marginBottom: 16,display: 'flex',
+                justifyContent: 'flex-end'}}>
+                <Button 
+                    type="primary" 
+                    onClick={handlePlayGame}
+                    size="large"
+                >
+                    Play Game Quiz
+                </Button>
+            </div>
+        )}
+
         <Form
-            disabled={!!id}
             form={form}
             layout="vertical"
             onFinish={onFinish}
@@ -223,19 +260,18 @@ const GameDetail = () => {
                                                     </div>
                                                 )}
                                             </Form.List>
-                                            <Radio.Group
-                                                defaultValue={0}
-                                                onChange={(e) => {
-                                                    // e.target.value sẽ là index (0,1,2,3) của radio được chọn
-                                                    form.setFieldValue(['questions', name, 'solution'], e.target.value);
-                                                }}
+                                            <Form.Item
+                                                name={[name, 'solution']}
+                                                style={{ marginBottom: 0 }}
                                             >
-                                                <Space direction="vertical">
-                                                    {[0, 1, 2, 3].map(index => (
-                                                        <Radio key={index} value={index}></Radio>
-                                                    ))}
-                                                </Space>
-                                            </Radio.Group>
+                                                <Radio.Group>
+                                                    <Space direction="vertical">
+                                                        {[0, 1, 2, 3].map(index => (
+                                                            <Radio key={index} value={index}></Radio>
+                                                        ))}
+                                                    </Space>
+                                                </Radio.Group>
+                                            </Form.Item>
                                         </div>
                                     </div>
                                 ))}
@@ -304,13 +340,13 @@ const GameDetail = () => {
                 </Select>
             </Form.Item>
 
-            <Form.Item hidden={!!id}>
-                <Button type="primary" htmlType="submit">
+            <Form.Item hidden={!!id} >
+                <Button  type="primary" htmlType="submit">
                     {id ? "Update Game" : "Create Game"}
                 </Button>
             </Form.Item>
-            
         </Form>
+    </>
     );
 };
 

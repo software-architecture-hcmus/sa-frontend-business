@@ -11,6 +11,7 @@ const RouterUrl = {
     GAME: "/game",
     GAME_DETAIL: "/game/:id",
     GAME_CREATE: "/game/create",
+    GAME_QUIZ: "/game/quiz/:id",
 }
 
 export default RouterUrl;
