@@ -80,18 +80,18 @@ const Events = () => {
       key: "end",
       render: (date) => new Date(date).toLocaleString(),
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Button 
-          type="link" 
-          danger 
-          icon={<DeleteOutlined />} 
-          onClick={() => showDeleteModal(record.id)}
-        />
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (_, record) => (
+    //     <Button 
+    //       type="link" 
+    //       danger 
+    //       icon={<DeleteOutlined />} 
+    //       onClick={() => showDeleteModal(record.id)}
+    //     />
+    //   ),
+    // },
   ];
   return (
     <div>
