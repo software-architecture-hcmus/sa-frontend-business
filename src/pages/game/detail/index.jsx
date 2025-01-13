@@ -148,7 +148,7 @@ const GameDetail = () => {
                                 const solution = question.solution;
                                 const solutionIndex = question?.answers?.findIndex(answer => answer.id == solution.id);
                                 question.solution = solutionIndex >= 0 ? solutionIndex : 0;
-                                question['image'] = question['image'] ? [{uid: '-1', name: 'image', status: 'done', url: question.image}] : [];
+                                question['image'] = question['image'] && question['image']!="null" ? [{uid: '-1', name: 'image', status: 'done', url: question.image}] : [];
                             }
                         }
                     }
