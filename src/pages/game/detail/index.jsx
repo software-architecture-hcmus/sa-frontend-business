@@ -17,6 +17,7 @@ const GameDetail = () => {
     const [gameType, setGameType] = useState('');
     const [defaultGames, setDefaultGames] = useState([]);
     const [events, setEvents] = useState([]);
+    const [isStarted, setIsStarted] = useState(false);
     const onFinish = async (values) => {
         try {
             const response = await apiClient.post(Url.CREATE_GAME, values);
@@ -76,6 +77,7 @@ const GameDetail = () => {
                     game['type'] = game.default_game?.game_type?.id
                     game['image'] = game.image ? [{uid: '-1', name: 'image', status: 'done', url: game.image}] : [];
                     game['event'] = game.event?.id;
+                    setIsStarted(game.started);
                     if(game.type && game.type === "FLAPPYBIRD")
                     {
                         game['play_count'] = game.game_turn[0]?.quantity;
@@ -96,7 +98,6 @@ const GameDetail = () => {
                             }
                         }
                     }
-                    console.log(game);
                     form.setFieldsValue(game);
                     setGameType(game.type);
                 }
@@ -128,6 +129,7 @@ const GameDetail = () => {
                     type="primary" 
                     onClick={handlePlayGame}
                     size="large"
+                    disabled={isStarted}
                 >
                     Play Game Quiz
                 </Button>
