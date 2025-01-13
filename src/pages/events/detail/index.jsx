@@ -6,6 +6,7 @@ import { successNotification, errorNotification } from "../../../utils/notificat
 import Url from "../../../const/Url";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
+import RouterUrl from "../../../const/RouterUrl";
 
 const EventDetail = () => {
     const {id} = useParams()
@@ -56,7 +57,7 @@ const EventDetail = () => {
 
             if (response.data.ok) {
                 successNotification(`Event ${isCreateEvent ? 'created' : 'updated' } successfully!`);
-                navigate('/events');
+                navigate(RouterUrl.EVENT_DETAIL.replace(":id", response.data.data.id));
             }
         } catch (error) {
             errorNotification(error.message)

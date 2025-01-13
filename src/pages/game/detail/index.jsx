@@ -80,6 +80,7 @@ const GameDetail = () => {
 
             if (response && response.status === (isCreateGame ? 201 : 200)) {
                 successNotification(`Game ${isCreateGame ? 'created' : 'updated'} successfully!`);
+                navigate(RouterUrl.GAME_DETAIL.replace(":id", response.data.data.id));
             } else {
                 errorNotification("Game operation failed!");
             }

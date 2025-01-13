@@ -71,13 +71,15 @@ const Game = () => {
   ];
   return (
     <div>
-      <Button
-        type="primary"
-        style={{ marginBottom: 16 }}
-        onClick={() => navigate(RouterUrl.GAME_CREATE)}
-      >
-        Create Game
-      </Button>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          type="primary"
+          style={{ marginBottom: 16 }}
+          onClick={() => navigate(RouterUrl.GAME_CREATE)}
+        >
+          + Create Game
+        </Button>
+      </div>
       <Table
         columns={columns}
         dataSource={games}

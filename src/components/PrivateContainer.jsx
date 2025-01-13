@@ -11,7 +11,7 @@ const PrivateContainer = ({ children, title }) => {
       <Layout>
         <Header />
         <Content style={{ padding: "20px"}}>
-            <h1>{title}</h1>
+            <h1 style={{fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1rem"}}>{title}</h1>
             {children}
         </Content>
       </Layout>
