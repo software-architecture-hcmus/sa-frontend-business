@@ -98,7 +98,6 @@ const EventDetail = () => {
         const newFileList = fileList.slice(-1);
         if (newFileList.length > 0) {
             const url = URL.createObjectURL(newFileList[0].originFileObj);
-            console.log('file' ,url);
             setPreviewUrl(url);
         } else {
             setPreviewUrl(null);
@@ -157,18 +156,10 @@ const EventDetail = () => {
                                 <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
                                     <Form.Item
                                         {...restField}
-                                        name={[name, 'code']}
-                                        rules={[{ required: true, message: 'Missing code' }]}
-                                    >
-                                        <Input placeholder="Voucher Code" />
-                                    </Form.Item>
-
-                                    <Form.Item
-                                        {...restField}
                                         name={[name, 'value']}
                                         rules={[{ required: true, message: 'Missing value' }]}
                                     >
-                                        <InputNumber placeholder="Value (point to exchange)" min={0} />
+                                        <InputNumber style={{ width: '200px' }} placeholder="Value (point to exchange)" min={0} />
                                     </Form.Item>
 
                                     <Form.Item
@@ -179,13 +170,17 @@ const EventDetail = () => {
                                         <Input placeholder="Description" />
                                     </Form.Item>
 
-                                    {/* <Form.Item
+                                    <Form.Item
                                         {...restField}
-                                        name={[name, 'amount']}
+                                        name={[name, 'total_codes']}
                                         rules={[{ required: true, message: 'Missing amount' }]}
                                     >
-                                        <InputNumber placeholder="Amount" min={1} />
-                                    </Form.Item> */}
+                                        <InputNumber 
+                                            placeholder="Amount" 
+                                            min={form.getFieldValue('vouchers')?.[name]?.total_codes || 1} 
+                                            max={5000} 
+                                        />
+                                    </Form.Item>
 
                                     <Form.Item
                                         {...restField}
