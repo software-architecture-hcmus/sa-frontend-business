@@ -17,18 +17,71 @@ const GameDetail = () => {
     const [gameType, setGameType] = useState('');
     const [defaultGames, setDefaultGames] = useState([]);
     const [events, setEvents] = useState([]);
+    const [isCreateGame, setIsCreateGame] = useState(true);
     const [isStarted, setIsStarted] = useState(false);
+
+    const sendRequest = async (formData, isCreateGame) => {
+        let response = null;
+        if (isCreateGame) {
+            response = await apiClient.post(Url.CREATE_GAME, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }); 
+        } else {
+            response = await apiClient.put(Url.UPDATE_GAME(id), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+        }
+        return response;
+    }
+
     const onFinish = async (values) => {
         try {
-            const response = await apiClient.post(Url.CREATE_GAME, values);
-            if (response && response.status === 201) {
-                console.log(response);
-                successNotification("Game has been created successfully!");
-                navigate(RouterUrl.GAME_DETAIL.replace(':id', response.data.data.id));
-                
+            const formData = new FormData();
+            if (values.image?.[0]?.originFileObj) {
+                formData.append('image', values.image[0].originFileObj);
             }
-            else{
-                errorNotification("Game has been created failed!");
+            const promises = Object.keys(values).map(async (key) => {
+                if (key !== 'image') {
+                    let value = values[key];
+                    if (key === 'questions') {
+                        const imageData = new FormData();
+                        // upload question images
+                        value.forEach((question, index) => {
+                            if (question['image']?.[0]?.originFileObj) {
+                                imageData.append(`files`, question['image'][0].originFileObj);
+                            } else {
+                                imageData.append(`files`, null);
+                            }
+                        });
+                        
+                        const response = await apiClient.post(Url.UPLOAD, imageData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                            },
+                        });
+
+                        if (response?.status === 200 && response?.data?.data) {
+                            value = JSON.stringify(value.map((question, index) => ({
+                                ...question, 
+                                image: response.data.data[index]
+                            })));
+                        }
+                    }
+                    formData.append(key, value);
+                }
+            });
+
+            await Promise.all(promises); // Wait for all promises to resolve
+            const response = await sendRequest(formData, isCreateGame);
+
+            if (response && response.status === (isCreateGame ? 201 : 200)) {
+                successNotification(`Game ${isCreateGame ? 'created' : 'updated'} successfully!`);
+            } else {
+                errorNotification("Game operation failed!");
             }
         } catch (error) {
             errorNotification(error.message);
@@ -70,6 +123,7 @@ const GameDetail = () => {
     useEffect(() => {
         const getGameDetail = async () => {
             if (id) {
+                setIsCreateGame(false);
                 let game = await apiClient.get(Url.GET_GAME_DETAIL.replace(":id", id));
                 if (game && game.status === 200 && game.data && game.data.data)
                 {
@@ -173,7 +227,7 @@ const GameDetail = () => {
                 label="Game Type"
                 rules={[{ required: true, message: 'Please select game type!' }]}
             >
-                <Select placeholder="Select game type" onChange={handleGameTypeChange}>
+                <Select placeholder="Select game type" onChange={handleGameTypeChange} disabled={!isCreateGame}>
                     {
                         defaultGames?.map((game) => (
                             <Option key={game.game_type.id} value={game.game_type.id}>{game.name}</Option>
@@ -333,7 +387,7 @@ const GameDetail = () => {
                 label="Event"
                 rules={[{ required: true, message: 'Please select event' }]}
             >
-                <Select placeholder="Select event type">
+                <Select placeholder="Select event type" disabled={!isCreateGame}>
                     {
                         events?.map((event) => (
                             <Option key={event.id} value={event.id}>{event.name}</Option>
@@ -342,9 +396,9 @@ const GameDetail = () => {
                 </Select>
             </Form.Item>
 
-            <Form.Item hidden={!!id} >
-                <Button  type="primary" htmlType="submit">
-                    {id ? "Update Game" : "Create Game"}
+            <Form.Item>
+                <Button type="primary" htmlType="submit">
+                    {isCreateGame ? "Create Game" : "Update Game"}
                 </Button>
             </Form.Item>
         </Form>
