@@ -22,7 +22,7 @@ const SidebarMenu = [
 const Sidebar = () => {
     return (
         <Sider style={{minHeight: "100vh", backgroundColor: "white"}}>
-            <div style={{textAlign: "center"}}><h1>LOGO</h1></div>
+            <div style={{textAlign: "center", fontSize: "1.5rem", fontWeight: "bold", padding: "1rem"}}><h1>LOGO</h1></div>
             <Menu items={SidebarMenu} />
         </Sider>
     )
