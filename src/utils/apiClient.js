@@ -1,5 +1,8 @@
 import axios from "axios";
-import { ACCESS_TOKEN } from "../const/LocalStorage";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../const/LocalStorage";
+import RouterUrl from "../const/RouterUrl";
+import { signOut } from "firebase/auth";
+import { authFirebase } from "./firebase";
 
 const apiClient = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -16,6 +19,22 @@ apiClient.interceptors.request.use((config) => {
     }
     return config;
 });
+
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            // Remove tokens from local storage
+            localStorage.removeItem(ACCESS_TOKEN);
+            localStorage.removeItem(REFRESH_TOKEN);
+            // Optionally sign out from Firebase
+            signOut(authFirebase);
+            // Redirect to login page
+            window.location.href = RouterUrl.LOGIN;
+        }
+        return Promise.reject(error);
+    }
+);
 
 //TODO: Add interceptor to refresh token
 
