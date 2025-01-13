@@ -15,7 +15,7 @@ export default function Question({ data: { question, image, cooldown } }) {
           {question}
         </h2>
 
-        {!!image && (
+        {!!image && image!="null" && (
           <img src={image} className="h-48 max-h-60 w-auto rounded-md" />
         )}
       </div>
