@@ -18,6 +18,7 @@ const Url = {
     UPDATE_EVENT: (id) => `api/v1/events/update/${id}`,
     UPLOAD: "/api/v1/upload",
     GET_VOUCHERS: "/api/v1/vouchers",
+    GET_CUSTOMER_VOUCHERS: "/api/v1/vouchers/customer-vouchers",
 }
 
 export default Url;

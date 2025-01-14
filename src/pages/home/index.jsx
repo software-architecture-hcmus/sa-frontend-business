@@ -3,13 +3,15 @@ import { Card, Typography, Space } from "antd";
 import apiClient from "../../utils/apiClient";
 import Url from "../../const/Url";
 import { errorNotification } from "../../utils/notification";
+import ProcessRing from "../../components/Dashboard/ProcessRing";
 const { Title } = Typography;
 
 const Home = () => {
     const [loading, setLoading] = useState(false);
     const [budget, setBudget] = useState(0);
+    const [spending, setSpending] = useState(0);
 
-    const fetchEvents = async () => {
+    const calculateBudget = async () => {
         try {
             setLoading(true);
             const response = await apiClient.get(Url.GET_VOUCHERS);
@@ -21,8 +23,23 @@ const Home = () => {
         }
     };
 
+    const calculateSpending = async () => {
+        try {
+            setLoading(true);
+            const response = await apiClient.get(Url.GET_CUSTOMER_VOUCHERS);
+            setSpending(response.data.data.reduce((sum, customerVoucher) => sum + customerVoucher.voucher.value, 0));
+        } catch (error) {
+            errorNotification(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    
+
     useEffect(() => {
-        fetchEvents();
+        calculateBudget();
+        calculateSpending();
     }, []);
 
 
@@ -33,10 +50,26 @@ const Home = () => {
                     <Card
                         hoverable
                         loading={loading}
-                        style={{ width: 400 }}
+                        style={{ width: 200, height: 150 }}
                     >
-                        <Title level={2} style={{ margin: 0 }}>{budget}</Title>
-                        <Title level={5} style={{ margin: 0 }} type="secondary">Budget</Title>
+                        <Title level={4} style={{ margin: 0 }} type="secondary">Budget</Title>
+                        <Title level={2}>{budget}</Title>
+                    </Card>
+                    <Card
+                        hoverable
+                        loading={loading}
+                        style={{ width: 200, height: 150 }}
+                    >
+                        <Title level={4} style={{ margin: 0 }} type="secondary">Spending</Title>
+                        <Title level={2}>{spending}</Title>
+                    </Card>
+                    <Card
+                        hoverable
+                        loading={loading}
+                        style={{ width: 400, height: 150 }}
+                    >
+                        <Title level={4} style={{ margin: 0 }} type="secondary">Spending percentage</Title>
+                        <ProcessRing progress={(spending / budget).toFixed(2)} />
                     </Card>
                 </Space>
                 <Space size="large" direction="horizontal">
