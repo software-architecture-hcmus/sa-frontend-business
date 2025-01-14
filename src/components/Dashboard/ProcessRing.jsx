@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { Chart } from '@antv/g2';
-import { Card } from 'antd';
 import PropTypes from 'prop-types';
 
 const ProcessRing = ({ progress }) => {

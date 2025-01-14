@@ -4,12 +4,14 @@ import apiClient from "../../utils/apiClient";
 import Url from "../../const/Url";
 import { errorNotification } from "../../utils/notification";
 import ProcessRing from "../../components/Dashboard/ProcessRing";
+import Donut from "../../components/Dashboard/Donut";
 const { Title } = Typography;
 
 const Home = () => {
     const [loading, setLoading] = useState(false);
     const [budget, setBudget] = useState(0);
     const [spending, setSpending] = useState(0);
+    const [eventStats, setEventStats] = useState([]);
 
     const calculateBudget = async () => {
         try {
@@ -35,11 +37,25 @@ const Home = () => {
         }
     }
 
+    const fetchEventStats = async () => {
+        try {
+            setLoading(true);
+            const response = await apiClient.get(Url.GET_EVENTS_STAT);
+            const data = response.data.data.map((stat) => ({ game: stat.event.name, plays: stat.playsPerEvent }));
+            setEventStats(data);
+        } catch (error) {
+            errorNotification(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     
 
     useEffect(() => {
         calculateBudget();
         calculateSpending();
+        fetchEventStats();
     }, []);
 
 
@@ -50,31 +66,32 @@ const Home = () => {
                     <Card
                         hoverable
                         loading={loading}
-                        style={{ width: 200, height: 150 }}
+                        style={{ width: 300, height: 150 }}
                     >
-                        <Title level={4} style={{ margin: 0 }} type="secondary">Budget</Title>
-                        <Title level={2}>{budget}</Title>
+                        <Title level={4} style={{ margin: 0 }}>Budget</Title>
+                        <Title level={2} style={{ margin: 0 }}>{budget}</Title>
                     </Card>
                     <Card
                         hoverable
                         loading={loading}
-                        style={{ width: 200, height: 150 }}
+                        style={{ width: 300, height: 150 }}
                     >
-                        <Title level={4} style={{ margin: 0 }} type="secondary">Spending</Title>
-                        <Title level={2}>{spending}</Title>
+                        <Title level={4} style={{ margin: 0 }}>Spending</Title>
+                        <Title level={2} style={{ margin: 0 }}>{spending}</Title>
                     </Card>
                     <Card
                         hoverable
                         loading={loading}
-                        style={{ width: 400, height: 150 }}
+                        style={{ width: 550, height: 150 }}
                     >
-                        <Title level={4} style={{ margin: 0 }} type="secondary">Spending percentage</Title>
-                        <ProcessRing progress={(spending / budget).toFixed(2)} />
+                        <Title level={4} style={{ margin: 0 }}>Spending percentage</Title>
+                        <ProcessRing progress={parseFloat((spending / budget).toFixed(2))} />
                     </Card>
                 </Space>
-                <Space size="large" direction="horizontal">
-                    
-                </Space>
+                <Card size="large" hoverable style={{ width: 1200}}>
+                    <Title level={4} style={{ margin: 0 }}>Number of plays per event</Title>
+                    <Donut loading={loading} data={eventStats} />
+                </Card>
             </Space>
         </>
     );
